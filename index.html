@@ -171,6 +171,37 @@
             min-width: 40px;
         }
 
+        .custom-words, .summary-style {
+            margin: 20px 0;
+        }
+
+        .custom-words label, .summary-style label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .custom-words textarea, .summary-style select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95em;
+            outline: none;
+        }
+
+        .custom-words textarea:focus, .summary-style select:focus {
+            border-color: #667eea;
+        }
+
+        .custom-words small {
+            display: block;
+            margin-top: 6px;
+            color: #999;
+        }
+
         .button-group {
             display: flex;
             gap: 10px;
@@ -380,6 +411,22 @@
             </div>
         </div>
 
+        <div class="custom-words">
+            <label for="customWords">Your own words / topics to focus on:</label>
+            <textarea id="customWords" rows="3"
+                placeholder="Example: focus on causes, important dates, and main points..."></textarea>
+            <small>These words help the summary choose the most relevant parts.</small>
+        </div>
+
+        <div class="summary-style">
+            <label for="summaryStyle">Summary style:</label>
+            <select id="summaryStyle">
+                <option value="short">Short & Sweet</option>
+                <option value="balanced">Balanced</option>
+                <option value="detailed">More Details</option>
+            </select>
+        </div>
+
         <div class="button-group">
             <button class="btn-summarize" id="summarizeBtn" disabled>Summarize</button>
             <button class="btn-clear" id="clearBtn">Clear</button>
@@ -439,6 +486,8 @@
         const originalWords = document.getElementById('originalWords');
         const summaryWords = document.getElementById('summaryWords');
         const compressionRatio = document.getElementById('compressionRatio');
+        const customWords = document.getElementById('customWords');
+        const summaryStyle = document.getElementById('summaryStyle');
 
         let selectedFile = null;
 
@@ -501,6 +550,8 @@
             fileInfo.classList.remove('show');
             summarySection.classList.remove('show');
             summarizeBtn.disabled = true;
+            customWords.value = '';
+            summaryStyle.value = 'short';
             hideError();
         });
 
@@ -536,7 +587,12 @@
                     );
                 }
 
-                const summary = createSummary(text, Number(summaryLength.value));
+                const summary = createSummary(
+                    text,
+                    Number(summaryLength.value),
+                    customWords.value,
+                    summaryStyle.value
+                );
                 displaySummary({
                     summary: summary,
                     originalWords: countWords(text),
@@ -598,20 +654,12 @@
             return text.trim() ? text.trim().split(/\s+/).length : 0;
         }
 
-        function createSummary(text, percentage) {
+        function createSummary(text, percentage, focusText = '', style = 'short') {
             const cleanText = text.replace(/\s+/g, ' ').trim();
             const sentences = cleanText.match(/[^.!?]+[.!?]+/g) || [cleanText];
 
             if (sentences.length <= 1) return cleanText;
 
-            // Keep roughly the requested percentage of sentences, with at least one.
-            const targetCount = Math.max(
-                1,
-                Math.ceil(sentences.length * Math.max(20, Math.min(100, percentage)) / 100)
-            );
-
-            // Simple extractive ranking: prioritize sentences containing
-            // frequently occurring meaningful words.
             const stopWords = new Set([
                 'the','and','that','this','with','from','have','were','which','their',
                 'there','about','would','could','should','into','also','than','then',
@@ -628,6 +676,30 @@
                 .filter(word => word.length > 2 && !stopWords.has(word))
                 .forEach(word => frequency[word] = (frequency[word] || 0) + 1);
 
+            // User-entered words/topics get extra weight.
+            const focusWords = (focusText || '')
+                .toLowerCase()
+                .replace(/[^a-z0-9\s]/g, ' ')
+                .split(/\s+/)
+                .filter(word => word.length > 2 && !stopWords.has(word));
+
+            const focusSet = new Set(focusWords);
+
+            let targetCount;
+            if (style === 'short') {
+                targetCount = Math.max(1, Math.ceil(sentences.length * 0.15));
+            } else if (style === 'detailed') {
+                targetCount = Math.max(1, Math.ceil(sentences.length * 0.35));
+            } else {
+                targetCount = Math.max(1, Math.ceil(sentences.length * 0.25));
+            }
+
+            // Respect the user's slider, while keeping "Short & Sweet" genuinely short.
+            targetCount = Math.min(
+                sentences.length,
+                Math.max(1, Math.ceil(targetCount * Math.max(0.5, percentage / 50)))
+            );
+
             const scored = sentences.map((sentence, index) => {
                 const words = sentence.toLowerCase()
                     .replace(/[^a-z0-9\s]/g, ' ')
@@ -635,22 +707,24 @@
                     .filter(word => word.length > 2 && !stopWords.has(word));
 
                 let score = words.reduce((sum, word) => sum + (frequency[word] || 0), 0);
+                const focusMatches = words.filter(word => focusSet.has(word)).length;
+
+                // Strongly prioritize the user's own focus words.
+                score += focusMatches * 12;
                 score = score / Math.sqrt(Math.max(1, words.length));
 
-                // Slightly favor earlier sentences because introductions often
-                // contain the main topic.
+                // Small preference for early sentences.
                 score += Math.max(0, 1 - index / sentences.length);
 
-                return { sentence, index, score };
+                return { sentence: sentence.trim(), index, score };
             });
 
-            const selected = scored
+            return scored
                 .sort((a, b) => b.score - a.score)
                 .slice(0, targetCount)
                 .sort((a, b) => a.index - b.index)
-                .map(item => item.sentence.trim());
-
-            return selected.join(' ');
+                .map(item => item.sentence)
+                .join(' ');
         }
 
         // Display summary
