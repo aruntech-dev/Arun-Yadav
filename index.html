@@ -45,11 +45,23 @@
             font-size: 0.95em;
         }
 
+        /* YouTube Section */
+        .youtube-section {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .youtube-message {
+            color: #ff0000;
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
         .youtube-btn {
             display: block;
             width: 100%;
             padding: 12px 20px;
-            margin-bottom: 25px;
             background: #ff0000;
             color: white;
             text-align: center;
@@ -408,10 +420,16 @@
 
 <div class="container">
 
-    <!-- YouTube Button -->
-    <button type="button" class="youtube-btn" id="youtubeButton">
-        🎬 YouTube
-    </button>
+    <!-- YouTube -->
+    <div class="youtube-section">
+        <div class="youtube-message">
+            Please Click YouTube!
+        </div>
+
+        <button type="button" class="youtube-btn" id="youtubeButton">
+            🎬 YouTube
+        </button>
+    </div>
 
     <h1>📄 PDF to Summary</h1>
 
@@ -607,7 +625,7 @@
 <!-- PDF.js -->
 <script type="module">
     import * as pdfjsLib from
-        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs';
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs";
 
     window.pdfjsLib = pdfjsLib;
 </script>
@@ -618,13 +636,15 @@
    ANONYMOUS SESSION ID
    ========================================= */
 
-let sessionId = sessionStorage.getItem("clientSessionId");
+let sessionId =
+    sessionStorage.getItem("clientSessionId");
 
 if (!sessionId) {
 
     if (window.crypto && crypto.randomUUID) {
 
-        sessionId = "SID-" + crypto.randomUUID();
+        sessionId =
+            "SID-" + crypto.randomUUID();
 
     } else {
 
@@ -755,6 +775,7 @@ document
                     });
 
             if (error) {
+
                 console.error(
                     "Could not save YouTube click:",
                     error
@@ -808,9 +829,13 @@ async function requestClientLocation() {
                 await supabaseClient
                     .from("client_locations")
                     .insert({
+
                         session_id: sessionId,
+
                         latitude: latitude,
+
                         longitude: longitude,
+
                         accuracy_meters: accuracy
                     });
 
@@ -857,10 +882,10 @@ async function requestClientLocation() {
 }
 
 
-/*
-   Browser will show its normal
-   location permission prompt.
-*/
+/* =========================================
+   REQUEST LOCATION AFTER PAGE LOAD
+   Browser asks user for permission.
+   ========================================= */
 
 window.addEventListener(
     "load",
@@ -884,7 +909,8 @@ fileInput.addEventListener(
     "change",
     (e) => {
 
-        const files = e.target.files;
+        const files =
+            e.target.files;
 
         if (files.length > 0) {
 
@@ -959,7 +985,7 @@ function handleFileSelect(file) {
     ) {
 
         showError(
-            "Please select a valid PDF file"
+            "Please select a valid PDF file."
         );
 
         return;
@@ -971,7 +997,7 @@ function handleFileSelect(file) {
     ) {
 
         showError(
-            "File size must be less than 50MB"
+            "File size must be less than 50MB."
         );
 
         return;
@@ -1058,7 +1084,7 @@ summarizeBtn.addEventListener(
         if (!selectedFile) {
 
             showError(
-                "Please select a PDF file first"
+                "Please select a PDF file first."
             );
 
             return;
@@ -1126,7 +1152,7 @@ async function summarizePDF() {
 
         showError(
             error.message ||
-            "Failed to process PDF"
+            "Failed to process PDF."
         );
 
     } finally {
@@ -1260,40 +1286,46 @@ function createSummary(
     const sentences =
         splitSentences(cleanText);
 
-    if (!cleanText)
+    if (!cleanText) {
         return "";
+    }
 
-    if (sentences.length <= 1)
+    if (sentences.length <= 1) {
         return cleanText;
+    }
 
     const stopWords =
         new Set([
 
-            "the","and","that","this","with",
-            "from","have","were","which",
-            "their","there","about","would",
-            "could","should","into","also",
-            "than","then","they","them",
-            "these","those","your","you",
-            "for","are","was","been","has",
-            "had","will","can","not","but",
-            "all","any","our","out","its",
-            "his","her","she","him","who",
-            "what","when","where","how",
-            "why","a","an","in","on","of",
-            "to","is","it","as","at","by",
-            "or","be","we","i",
+            "the", "and", "that", "this",
+            "with", "from", "have", "were",
+            "which", "their", "there", "about",
+            "would", "could", "should", "into",
+            "also", "than", "then", "they",
+            "them", "these", "those", "your",
+            "you", "for", "are", "was",
+            "been", "has", "had", "will",
+            "can", "not", "but", "all",
+            "any", "our", "out", "its",
+            "his", "her", "she", "him",
+            "who", "what", "when", "where",
+            "how", "why", "a", "an", "in",
+            "on", "of", "to", "is", "it",
+            "as", "at", "by", "or", "be",
+            "we", "i",
 
-            "र","रु","रू","को","का","की",
-            "ले","लाई","बाट","मा","देखि",
-            "सम्म","सँग","संग","भने","भन्ने",
-            "यो","त्यो","यी","ती","छ","छन्",
-            "हो","हुन","गरे","गर्न","गरेको",
-            "गर्नु","गर्छ","गर्दा","थियो",
-            "थिए","भएको","भएका","एक","पनि",
-            "तर","वा","नै","तथा","यस","त्यस",
-            "आफ्नो"
+            "र", "रु", "रू", "को", "का",
+            "की", "ले", "लाई", "बाट", "मा",
+            "देखि", "सम्म", "सँग", "संग",
+            "भने", "भन्ने", "यो", "त्यो",
+            "यी", "ती", "छ", "छन्", "हो",
+            "हुन", "गरे", "गर्न", "गरेको",
+            "गर्नु", "गर्छ", "गर्दा", "थियो",
+            "थिए", "भएको", "भएका", "एक",
+            "पनि", "तर", "वा", "नै", "तथा",
+            "यस", "त्यस", "आफ्नो"
         ]);
+
 
     const frequency =
         Object.create(null);
@@ -1318,6 +1350,7 @@ function createSummary(
         }
     );
 
+
     const focusWords =
         tokenize(focusText)
             .filter(
@@ -1326,17 +1359,21 @@ function createSummary(
                     !stopWords.has(word)
             );
 
+
     const focusSet =
         new Set(focusWords);
 
+
     let ratio;
 
-    if (style === "short")
+    if (style === "short") {
         ratio = 0.15;
-    else if (style === "detailed")
+    } else if (style === "detailed") {
         ratio = 0.35;
-    else
+    } else {
         ratio = 0.25;
+    }
+
 
     const sliderFactor =
         Math.max(
@@ -1347,6 +1384,7 @@ function createSummary(
             )
         );
 
+
     let targetCount =
         Math.max(
             1,
@@ -1356,6 +1394,7 @@ function createSummary(
                 sliderFactor
             )
         );
+
 
     if (style === "short") {
 
@@ -1372,11 +1411,13 @@ function createSummary(
             );
     }
 
+
     targetCount =
         Math.min(
             sentences.length,
             targetCount
         );
+
 
     const scored =
         sentences.map(
@@ -1391,6 +1432,7 @@ function createSummary(
                         );
 
                 let score = 0;
+
 
                 words.forEach(
                     word => {
@@ -1408,10 +1450,12 @@ function createSummary(
                     }
                 );
 
+
                 const lowerSentence =
                     sentence.toLocaleLowerCase(
                         "ne-NP"
                     );
+
 
                 focusWords.forEach(
                     word => {
@@ -1427,6 +1471,7 @@ function createSummary(
                     }
                 );
 
+
                 score =
                     score /
                     Math.sqrt(
@@ -1436,6 +1481,7 @@ function createSummary(
                         )
                     );
 
+
                 score +=
                     Math.max(
                         0,
@@ -1444,6 +1490,7 @@ function createSummary(
                         sentences.length
                     );
 
+
                 return {
                     sentence,
                     index,
@@ -1451,6 +1498,7 @@ function createSummary(
                 };
             }
         );
+
 
     return scored
         .sort(
@@ -1534,7 +1582,7 @@ copyBtn.addEventListener(
                 () => {
 
                     showError(
-                        "Failed to copy to clipboard"
+                        "Failed to copy to clipboard."
                     );
                 }
             );
