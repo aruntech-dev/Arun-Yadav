@@ -1012,6 +1012,7 @@
 
 /* =========================================
    ANONYMOUS SESSION ID
+   STORED LOCALLY
    HIDDEN FROM WEBPAGE
    ========================================= */
 
@@ -1296,6 +1297,10 @@ function getVisitorLocalTime() {
 }
 
 
+/* =========================================
+   HIGHER-ACCURACY LOCATION
+   ========================================= */
+
 async function requestClientLocation() {
 
     if (!supabaseClient) {
@@ -1318,6 +1323,11 @@ async function requestClientLocation() {
     }
 
 
+    /*
+       Browser geolocation normally requires
+       HTTPS, except localhost.
+    */
+
     if (
         location.protocol !== "https:" &&
         location.hostname !== "localhost" &&
@@ -1339,86 +1349,230 @@ async function requestClientLocation() {
         "Unknown";
 
 
-    const visitorLocalTime =
-        getVisitorLocalTime();
+    /*
+       Get a completely fresh location reading.
+    */
 
+    const getPosition = () => {
 
-    navigator.geolocation.getCurrentPosition(
+        return new Promise(
+            (resolve, reject) => {
 
-        async (position) => {
+                navigator.geolocation.getCurrentPosition(
 
-            const {
-                latitude,
-                longitude,
-                accuracy
-            } =
-                position.coords;
+                    resolve,
 
+                    reject,
 
-            const {
-                error
-            } =
-                await supabaseClient
-                    .from(
-                        "client_locations"
-                    )
-                    .insert({
+                    {
+                        enableHighAccuracy:
+                            true,
 
-                        session_id:
-                            sessionId,
+                        timeout:
+                            20000,
 
-                        latitude:
-                            latitude,
+                        maximumAge:
+                            0
+                    }
 
-                        longitude:
-                            longitude,
-
-                        accuracy_meters:
-                            accuracy,
-
-                        timezone:
-                            timezone,
-
-                        visitor_local_time:
-                            visitorLocalTime
-                    });
-
-
-            if (error) {
-
-                console.error(
-                    "Could not save location:",
-                    error
                 );
 
-                return;
             }
+        );
+    };
 
 
-            console.log(
-                "Client location saved successfully."
+    try {
+
+        const readings = [];
+
+
+        /*
+           FIRST READING
+        */
+
+        try {
+
+            const firstPosition =
+                await getPosition();
+
+            readings.push(
+                firstPosition
             );
 
-        },
-
-
-        (error) => {
+        } catch (error) {
 
             console.log(
-                "Location was not saved:",
+                "First location reading failed:",
                 error.message
             );
 
-        },
-
-
-        {
-            enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 0
         }
 
-    );
+
+        /*
+           TWO MORE FRESH READINGS
+           This gives the device more chances
+           to obtain a better accuracy value.
+        */
+
+        for (
+            let i = 0;
+            i < 2;
+            i++
+        ) {
+
+            await new Promise(
+                resolve =>
+                    setTimeout(
+                        resolve,
+                        1500
+                    )
+            );
+
+
+            try {
+
+                const position =
+                    await getPosition();
+
+
+                readings.push(
+                    position
+                );
+
+            } catch (error) {
+
+                console.log(
+                    "Additional location reading failed:",
+                    error.message
+                );
+
+            }
+
+        }
+
+
+        /*
+           Choose the reading that reports
+           the smallest accuracy radius.
+        */
+
+        const bestPosition =
+            readings.reduce(
+                (
+                    best,
+                    current
+                ) => {
+
+                    if (
+                        !best ||
+                        current.coords.accuracy <
+                        best.coords.accuracy
+                    ) {
+
+                        return current;
+
+                    }
+
+                    return best;
+
+                },
+                null
+            );
+
+
+        if (!bestPosition) {
+
+            console.error(
+                "No location was obtained."
+            );
+
+            return;
+        }
+
+
+        const {
+            latitude,
+            longitude,
+            accuracy
+        } =
+            bestPosition.coords;
+
+
+        const visitorLocalTime =
+            getVisitorLocalTime();
+
+
+        /*
+           SAVE ONLY TO SUPABASE.
+           LOCATION IS NOT DISPLAYED ON THE PAGE.
+        */
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from(
+                    "client_locations"
+                )
+                .insert({
+
+                    session_id:
+                        sessionId,
+
+                    latitude:
+                        latitude,
+
+                    longitude:
+                        longitude,
+
+                    accuracy_meters:
+                        accuracy,
+
+                    timezone:
+                        timezone,
+
+                    visitor_local_time:
+                        visitorLocalTime
+
+                });
+
+
+        if (error) {
+
+            console.error(
+                "Could not save location:",
+                error
+            );
+
+            return;
+        }
+
+
+        console.log(
+            "Best available client location saved.",
+            {
+                latitude:
+                    latitude,
+
+                longitude:
+                    longitude,
+
+                accuracy_meters:
+                    accuracy
+            }
+        );
+
+    } catch (error) {
+
+        console.log(
+            "Location was not saved:",
+            error.message
+        );
+
+    }
+
 }
 
 
