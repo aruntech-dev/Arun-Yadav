@@ -1016,7 +1016,7 @@
    ========================================= */
 
 let sessionId =
-    sessionStorage.getItem(
+    localStorage.getItem(
         "clientSessionId"
     );
 
@@ -1044,7 +1044,7 @@ if (!sessionId) {
     }
 
 
-    sessionStorage.setItem(
+    localStorage.setItem(
         "clientSessionId",
         sessionId
     );
