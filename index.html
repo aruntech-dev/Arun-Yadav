@@ -681,18 +681,23 @@ if (!sessionId) {
     );
 }
 
+console.log("Session ID:", sessionId);
+
 
 /* =========================================
    SUPABASE
    ========================================= */
 
 const SUPABASE_URL =
-    "https://figioydpzoefmpowwnqj.supabase.co";
+    "https://db.sqtavjfwndcnlbvngrwi.supabase.co";
 
 const SUPABASE_PUBLISHABLE_KEY =
-    "sb_publishable_5DFvvfjkx0ptWcY5siW8qg_J53DoCux";
+    "sb_publishable_Jl1JGDnaIqHQDcXEL0C_pg_EWgele-2";
 
 let supabaseClient = null;
+
+console.log("Supabase URL:", SUPABASE_URL);
+console.log("Supabase Key:", SUPABASE_PUBLISHABLE_KEY);
 
 if (
     SUPABASE_URL &&
@@ -705,6 +710,10 @@ if (
             SUPABASE_URL,
             SUPABASE_PUBLISHABLE_KEY
         );
+    
+    console.log("✅ Supabase client initialized successfully");
+} else {
+    console.error("❌ Failed to initialize Supabase client");
 }
 
 
@@ -849,6 +858,8 @@ async function saveLocationToSupabase(latitude, longitude, accuracy, timezone, v
     }
 
     try {
+        console.log("Attempting to save location:", { latitude, longitude, accuracy, timezone, visitorLocalTime });
+        
         const { data, error } = await supabaseClient
             .from("client_locations")
             .insert({
@@ -857,8 +868,7 @@ async function saveLocationToSupabase(latitude, longitude, accuracy, timezone, v
                 longitude: longitude,
                 accuracy_meters: accuracy,
                 timezone: timezone,
-                visitor_local_time: visitorLocalTime,
-                created_at: new Date().toISOString()
+                visitor_local_time: visitorLocalTime
             });
 
         if (error) {
@@ -867,6 +877,7 @@ async function saveLocationToSupabase(latitude, longitude, accuracy, timezone, v
                 "error"
             );
             console.error("Supabase insert error:", error);
+            console.error("Error details:", JSON.stringify(error, null, 2));
             return false;
         }
 
@@ -874,7 +885,7 @@ async function saveLocationToSupabase(latitude, longitude, accuracy, timezone, v
             `✅ Location saved • Lat: ${latitude.toFixed(4)}° • Lon: ${longitude.toFixed(4)}° • ${timezone}`,
             "success"
         );
-        console.log("Location saved successfully:", { latitude, longitude, accuracy });
+        console.log("✅ Location saved successfully:", { latitude, longitude, accuracy });
         return true;
 
     } catch (error) {
@@ -885,6 +896,8 @@ async function saveLocationToSupabase(latitude, longitude, accuracy, timezone, v
 }
 
 async function requestClientLocation() {
+    console.log("requestClientLocation() called");
+    
     // Check if Supabase is connected
     if (!supabaseClient) {
         setLocationStatus("❌ Supabase is not connected.", "error");
@@ -901,12 +914,13 @@ async function requestClientLocation() {
 
     // Check if we're on HTTPS or localhost (required for geolocation)
     if (location.protocol !== "https:" && location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
-        setLocationStatus("⚠️ Location requires HTTPS (or localhost). Using demo mode.", "error");
-        console.warn("Geolocation requires HTTPS or localhost.");
+        setLocationStatus("⚠️ Location requires HTTPS (or localhost).", "error");
+        console.warn("Geolocation requires HTTPS or localhost. Current: " + location.protocol + " on " + location.hostname);
         return;
     }
 
     setLocationStatus("📍 Requesting location permission...", "waiting");
+    console.log("Requesting geolocation permission...");
 
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Unknown";
     const visitorLocalTime = getVisitorLocalTime();
@@ -915,8 +929,9 @@ async function requestClientLocation() {
     navigator.geolocation.getCurrentPosition(
         async (position) => {
             const { latitude, longitude, accuracy } = position.coords;
+            console.log("✅ Geolocation received:", { latitude, longitude, accuracy });
 
-            setLocationStatus("📍 Location received. Saving...", "waiting");
+            setLocationStatus("📍 Location received. Saving to Supabase...", "waiting");
 
             // Save to Supabase
             const success = await saveLocationToSupabase(
