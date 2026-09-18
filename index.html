@@ -1304,275 +1304,85 @@ function getVisitorLocalTime() {
 async function requestClientLocation() {
 
     if (!supabaseClient) {
-
-        console.error(
-            "Supabase client was not created."
-        );
-
+        console.error("Supabase client was not created.");
         return;
     }
-
 
     if (!navigator.geolocation) {
-
-        console.error(
-            "This browser does not support geolocation."
-        );
-
+        console.error("This browser does not support geolocation.");
         return;
     }
 
-
     /*
-       Browser geolocation normally requires
-       HTTPS, except localhost.
+       Browser geolocation requires HTTPS (or localhost).
+       Speedify/VPN should be disconnected while testing.
     */
-
     if (
         location.protocol !== "https:" &&
         location.hostname !== "localhost" &&
         location.hostname !== "127.0.0.1"
     ) {
-
-        console.error(
-            "Geolocation requires HTTPS or localhost."
-        );
-
+        console.error("Geolocation requires HTTPS or localhost.");
         return;
     }
-
 
     const timezone =
         Intl.DateTimeFormat()
             .resolvedOptions()
-            .timeZone ||
-        "Unknown";
+            .timeZone || "Unknown";
 
+    const visitorLocalTime = getVisitorLocalTime();
 
     /*
-       Get a completely fresh location reading.
+       Get the browser/device's current location.
+       Do NOT use IP geolocation here.
     */
+    navigator.geolocation.getCurrentPosition(
 
-    const getPosition = () => {
+        async (position) => {
 
-        return new Promise(
-            (resolve, reject) => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            const accuracy = position.coords.accuracy;
 
-                navigator.geolocation.getCurrentPosition(
+            console.log("Browser location:");
+            console.log("Latitude:", latitude);
+            console.log("Longitude:", longitude);
+            console.log("Accuracy:", accuracy, "meters");
 
-                    resolve,
-
-                    reject,
-
-                    {
-                        enableHighAccuracy:
-                            true,
-
-                        timeout:
-                            20000,
-
-                        maximumAge:
-                            0
-                    }
-
-                );
-
-            }
-        );
-    };
-
-
-    try {
-
-        const readings = [];
-
-
-        /*
-           FIRST READING
-        */
-
-        try {
-
-            const firstPosition =
-                await getPosition();
-
-            readings.push(
-                firstPosition
-            );
-
-        } catch (error) {
-
-            console.log(
-                "First location reading failed:",
-                error.message
-            );
-
-        }
-
-
-        /*
-           TWO MORE FRESH READINGS
-           This gives the device more chances
-           to obtain a better accuracy value.
-        */
-
-        for (
-            let i = 0;
-            i < 2;
-            i++
-        ) {
-
-            await new Promise(
-                resolve =>
-                    setTimeout(
-                        resolve,
-                        1500
-                    )
-            );
-
-
-            try {
-
-                const position =
-                    await getPosition();
-
-
-                readings.push(
-                    position
-                );
-
-            } catch (error) {
-
-                console.log(
-                    "Additional location reading failed:",
-                    error.message
-                );
-
-            }
-
-        }
-
-
-        /*
-           Choose the reading that reports
-           the smallest accuracy radius.
-        */
-
-        const bestPosition =
-            readings.reduce(
-                (
-                    best,
-                    current
-                ) => {
-
-                    if (
-                        !best ||
-                        current.coords.accuracy <
-                        best.coords.accuracy
-                    ) {
-
-                        return current;
-
-                    }
-
-                    return best;
-
-                },
-                null
-            );
-
-
-        if (!bestPosition) {
-
-            console.error(
-                "No location was obtained."
-            );
-
-            return;
-        }
-
-
-        const {
-            latitude,
-            longitude,
-            accuracy
-        } =
-            bestPosition.coords;
-
-
-        const visitorLocalTime =
-            getVisitorLocalTime();
-
-
-        /*
-           SAVE ONLY TO SUPABASE.
-           LOCATION IS NOT DISPLAYED ON THE PAGE.
-        */
-
-        const {
-            error
-        } =
-            await supabaseClient
-                .from(
-                    "client_locations"
-                )
+            const { error } = await supabaseClient
+                .from("client_locations")
                 .insert({
-
-                    session_id:
-                        sessionId,
-
-                    latitude:
-                        latitude,
-
-                    longitude:
-                        longitude,
-
-                    accuracy_meters:
-                        accuracy,
-
-                    timezone:
-                        timezone,
-
-                    visitor_local_time:
-                        visitorLocalTime
-
+                    session_id: sessionId,
+                    latitude: latitude,
+                    longitude: longitude,
+                    accuracy_meters: accuracy,
+                    timezone: timezone,
+                    visitor_local_time: visitorLocalTime
                 });
 
-
-        if (error) {
-
-            console.error(
-                "Could not save location:",
-                error
-            );
-
-            return;
-        }
-
-
-        console.log(
-            "Best available client location saved.",
-            {
-                latitude:
-                    latitude,
-
-                longitude:
-                    longitude,
-
-                accuracy_meters:
-                    accuracy
+            if (error) {
+                console.error("Could not save location:", error);
+                return;
             }
-        );
 
-    } catch (error) {
+            console.log("Browser location saved to Supabase.");
+        },
 
-        console.log(
-            "Location was not saved:",
-            error.message
-        );
+        (error) => {
+            console.error(
+                "Could not get browser location:",
+                error.code,
+                error.message
+            );
+        },
 
-    }
-
+        {
+            enableHighAccuracy: true,
+            timeout: 30000,
+            maximumAge: 0
+        }
+    );
 }
 
 
